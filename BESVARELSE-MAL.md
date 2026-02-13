@@ -1,10 +1,10 @@
 # Besvarelse - Refleksjon og Analyse
 
-**Student:** [Ditt navn]
+**Student:** [EYAD ALAWAK]
 
-**Studentnummer:** [Ditt studentnummer]
+**Studentnummer:** [405126]
 
-**Dato:** [Innleveringsdato]
+**Dato:** [15.02.26]
 
 ---
 
@@ -14,11 +14,54 @@
 
 **Identifiserte entiteter:**
 
-[Skriv ditt svar her - list opp alle entitetene du har identifisert]
+[Jeg har identifisert følgende entiteter i systemet:
+
+- Kunde
+- Sykkel
+- Stasjon
+- Lås
+- Utleie]
 
 **Attributter for hver entitet:**
 
-[Skriv ditt svar her - list opp attributtene for hver entitet]
+[Attributter for hver entitet:
+
+Kunde:
+- kunde_id
+- fornavn
+- etternavn
+- epost
+- mobilnummer
+- registrert_dato
+
+Sykkel:
+- sykkel_id
+- status
+- stasjon_id
+- lås_id
+
+Stasjon:
+- stasjon_id
+- navn
+- adresse
+- kapasitet
+
+Lås:
+- lås_id
+- lås_kode
+- aktiv
+
+Utleie:
+- utleie_id
+- kunde_id
+- sykkel_id
+- hentet_stasjon_id
+- levert_stasjon_id
+- start_tid
+- slutt_tid
+- pris
+- betalingsmetode
+- betalt]
 
 ---
 
@@ -26,15 +69,74 @@
 
 **Valgte datatyper og begrunnelser:**
 
-[Skriv ditt svar her - forklar hvilke datatyper du har valgt for hver attributt og hvorfor]
+[Jeg har valgt følgende datatyper:
+
+- ID-felter: INTEGER / SERIAL
+- Tekstfelt (navn, adresse, epost): VARCHAR
+- Dato og tid: TIMESTAMP
+- Pris: NUMERIC(8,2)
+- Status: VARCHAR eller BOOLEAN
+- betalingsmetode:VARCHAR
+- betalt:BOOLEAN]
 
 **`CHECK`-constraints:**
 
-[Skriv ditt svar her - list opp alle CHECK-constraints du har lagt til og forklar hvorfor de er nødvendige]
+[Eksempler på CHECK-constraints:
+
+- pris > 0
+- kapasitet >= 0
+- status IN ('tilgjengelig', 'utleid']
 
 **ER-diagram:**
 
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
+[```mermaid
+erDiagram
+
+KUNDE {
+  int kunde_id PK
+  varchar fornavn
+  varchar etternavn
+  varchar epost
+  varchar mobilnummer
+}
+
+STASJON {
+  int stasjon_id PK
+  varchar navn
+  varchar adresse
+  int kapasitet
+}
+
+SYKKEL {
+  int sykkel_id PK
+  varchar status
+  int stasjon_id FK
+  int las_id FK
+}
+
+LAS {
+  int las_id PK
+  varchar las_kode
+}
+
+UTLEIE {
+  int utleie_id PK
+  int kunde_id FK
+  int sykkel_id FK
+  int hentet_stasjon_id FK
+  int levert_stasjon_id FK
+  timestamp start_tid
+  timestamp slutt_tid
+  numeric pris
+}
+
+KUNDE ||--o{ UTLEIE : har
+SYKKEL ||--o{ UTLEIE : brukes_i
+STASJON ||--o{ SYKKEL : inneholder
+STASJON ||--o{ UTLEIE : hentet_fra
+STASJON ||--o{ UTLEIE : levert_til
+LAS ||--|| SYKKEL : laaser
+```]
 
 ---
 
@@ -42,15 +144,20 @@
 
 **Valgte primærnøkler og begrunnelser:**
 
-[Skriv ditt svar her - forklar hvilke primærnøkler du har valgt for hver entitet og hvorfor]
+[Jeg har brukt surrogate primærnøkler (auto-increment INTEGER) for alle tabeller:
+kunde_id, sykkel_id, stasjon_id, lås_id og utleie_id.
+Dette gjør systemet enklere og mer fleksibelt.]
 
 **Naturlige vs. surrogatnøkler:**
 
-[Skriv ditt svar her - diskuter om du har brukt naturlige eller surrogatnøkler og hvorfor]
+[Naturlige nøkler kan være epost eller mobilnummer, men disse kan endres.
+Derfor valgte jeg surrogate nøkler som er mer stabile.
+Naturlige nøkler som epost og mobilnummer bør ha UNIQUE-constraint.
+]
 
 **Oppdatert ER-diagram:**
 
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
+[SE OVER DIAGRAM]
 
 ---
 
@@ -58,15 +165,29 @@
 
 **Identifiserte forhold og kardinalitet:**
 
-[Skriv ditt svar her - list opp alle forholdene mellom entitetene og angi kardinalitet]
+[Forhold mellom entiteter:
+
+- En stasjon har mange sykler (1-m)
+- En kunde kan ha mange utleier (1-m)
+- En sykkel kan ha mange utleier (1-m)
+- En utleie tilhører én kunde og én sykkel
+- En stasjon kan være hentested eller leveringssted for mange utleier (1-m)
+]
 
 **Fremmednøkler:**
 
-[Skriv ditt svar her - list opp alle fremmednøklene og forklar hvordan de implementerer forholdene]
+[Fremmednøkler:
+
+- sykkel.stasjon_id → stasjon.stasjon_id
+- sykkel.lås_id → lås.lås_id
+- utleie.kunde_id → kunde.kunde_id
+- utleie.sykkel_id → sykkel.sykkel_id
+- utleie.hentet_stasjon_id → stasjon.stasjon_id
+- utleie.levert_stasjon_id → stasjon.stasjon_id]
 
 **Oppdatert ER-diagram:**
 
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
+[SE OVER DIAGRAM]
 
 ---
 
@@ -74,19 +195,32 @@
 
 **Vurdering av 1. normalform (1NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 1NF og hvorfor]
+[Datamodellen tilfredsstiller 1NF fordi alle tabeller har atomiske verdier.
+Det finnes ingen lister eller flere verdier i samme felt.
+For eksempel har hver kunde ett mobilnummer per rad, og hver sykkel har én status.
+Alle kolonner inneholder én verdi per celle.
+
+]
 
 **Vurdering av 2. normalform (2NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 2NF og hvorfor]
+[Datamodellen tilfredsstiller 2NF fordi alle ikke-nøkkel-attributter er fullt avhengige av hele primærnøkkelen.
+Hver tabell har en enkel primærnøkkel (ID), og informasjon som pris, start_tid og slutt_tid avhenger kun av utleie_id i UTLEIE-tabellen.
+Det finnes ingen delvise avhengigheter.
+]
 
 **Vurdering av 3. normalform (3NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 3NF og hvorfor]
+[Datamodellen tilfredsstiller 3NF fordi det ikke finnes transitive avhengigheter.
+For eksempel er informasjon om stasjon lagret i STASJON-tabellen og ikke i SYKKEL eller UTLEIE.
+Kundedata er kun i KUNDE-tabellen.
+Dette reduserer duplisering og inkonsistens.]
 
 **Eventuelle justeringer:**
 
-[Skriv ditt svar her - hvis modellen ikke var på 3NF, forklar hvilke justeringer du har gjort]
+[Hvis modellen ikke var i 3NF, kunne vi fått duplisert data, for eksempel at stasjonsadresse ble lagret i flere tabeller.
+Jeg løste dette ved å flytte informasjon til egne tabeller og bruke fremmednøkler.
+]
 
 ---
 
