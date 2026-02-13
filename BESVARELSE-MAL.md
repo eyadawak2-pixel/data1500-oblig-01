@@ -182,15 +182,17 @@ ORDER BY table_name;
 
 **Totalt antall utleier per år:**
 
-[Skriv din utregning her]
+Jeg har sett på antall utleier per måned og delt året inn i høysesong, mellomsesong og lavsesong. 
+Jeg brukte gjennomsnittet av utleier for å estimere kapasiteten.
+
 
 **Estimat for lagringskapasitet:**
 
-[Skriv din utregning her - vis hvordan du har beregnet lagringskapasiteten for hver tabell]
+Estimert kapasitet er ca. 8000 utleier per år.
 
 **Totalt for første år:**
 
-[Skriv ditt estimat her]
+3500
 
 ---
 
@@ -200,31 +202,42 @@ ORDER BY table_name;
 
 **Problem 1: Redundans**
 
-[Skriv ditt svar her - gi konkrete eksempler fra CSV-filen som viser redundans]
+Redundans betyr at samme informasjon lagres flere ganger. 
+I en CSV-fil kan for eksempel stasjonsnavn bli gjentatt i mange rader, 
+mens i en relasjonsdatabase lagres det én gang i egen tabell.
 
 **Problem 2: Inkonsistens**
 
-[Skriv ditt svar her - forklar hvordan redundans kan føre til inkonsistens med eksempler]
+Inkonsistens oppstår når samme data ikke er lik overalt. 
+Hvis en stasjon endres i én rad men ikke i en annen i CSV-filen, 
+kan vi få feil informasjon.
+
 
 **Problem 3: Oppdateringsanomalier**
 
-[Skriv ditt svar her - diskuter slette-, innsettings- og oppdateringsanomalier]
+Oppdateringsanomalier skjer når man må endre samme informasjon flere steder. 
+Det kan føre til feil ved sletting, innsetting eller oppdatering av data.
 
 **Fordeler med en indeks:**
 
-[Skriv ditt svar her - forklar hvorfor en indeks ville gjort spørringen mer effektiv]
+En indeks gjør søk raskere fordi databasen slipper å lese hele tabellen. 
+Den fungerer som et register som peker direkte til riktige rader.
 
 **Case 1: Indeks passer i RAM**
 
-[Skriv ditt svar her - forklar hvordan indeksen fungerer når den passer i minnet]
+Når indeksen passer i RAM, går søk veldig raskt fordi data kan leses direkte fra minnet uten disk-tilgang.
+
 
 **Case 2: Indeks passer ikke i RAM**
 
-[Skriv ditt svar her - forklar hvordan flettesortering kan brukes]
+
+Hvis indeksen ikke passer i RAM, må databasen lese fra disk, og spørringer blir tregere.
 
 **Datastrukturer i DBMS:**
 
-[Skriv ditt svar her - diskuter B+-tre og hash-indekser]
+B-tree brukes til sorterte søk og range-queries, 
+mens Hash-indeks er rask for eksakte oppslag men fungerer ikke for intervallsøk.
+
 
 ---
 
@@ -232,17 +245,18 @@ ORDER BY table_name;
 
 **Foreslått datastruktur:**
 
-[Skriv ditt svar her - f.eks. heap-fil, LSM-tree, eller annen egnet datastruktur]
+HashMap (hash-tabell)
 
 **Begrunnelse:**
 
 **Skrive-operasjoner:**
 
-[Skriv ditt svar her - forklar hvorfor datastrukturen er egnet for mange skrive-operasjoner]
+ En HashMap er egnet for mange skrive-operasjoner fordi innsetting og oppdatering går i gjennomsnitt i O(1). Når vi logger hendelser kan vi raskt legge til eller oppdatere informasjon uten å lete gjennom en liste.
 
 **Lese-operasjoner:**
 
-[Skriv ditt svar her - forklar hvordan datastrukturen håndterer sjeldne lese-operasjoner]
+For lese-operasjoner gir HashMap rask oppslagstid (O(1) i gjennomsnitt), slik at vi raskt kan hente logg-/brukerinformasjon ved en nøkkel (f.eks. kundeId eller mobilnummer).
+
 
 ---
 
@@ -250,23 +264,32 @@ ORDER BY table_name;
 
 **Hvor bør validering gjøres:**
 
-[Skriv ditt svar her - argumenter for validering i ett eller flere lag]
+Validering bør gjøres i flere lag samtidig: i nettleseren, i applikasjonslaget og i databasen. 
+Dette gir bedre sikkerhet og reduserer risikoen for feil data.
+
 
 **Validering i nettleseren:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+Fordeler: Rask tilbakemelding til brukeren og bedre brukeropplevelse. 
+Ulemper: Ikke sikkert alene fordi brukeren kan omgå JavaScript eller manipulere data.
+
 
 **Validering i applikasjonslaget:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+Fordeler: Gir god kontroll over forretningslogikk og sikkerhet. 
+Ulemper: Kan gi litt mer kompleks kode og mer arbeid på serveren
 
 **Validering i databasen:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+Fordeler: Sikrer dataintegritet uansett hvor data kommer fra. 
+Ulemper: Mindre fleksibilitet og kan gi strengere begrensninger.
+
 
 **Konklusjon:**
 
-[Skriv ditt svar her - oppsummer hvor validering bør gjøres og hvorfor]
+Den beste løsningen er å kombinere validering i alle lag. 
+Nettleseren gir rask respons, applikasjonen håndterer logikk og databasen sikrer korrekt lagring.
+
 
 ---
 
@@ -274,21 +297,23 @@ ORDER BY table_name;
 
 **Hva har du lært så langt i emnet:**
 
-[Skriv din refleksjon her - diskuter sentrale konsepter du har lært]
+Så langt i emnet har jeg lært grunnleggende databaseforståelse, SQL-spørringer, normalisering og hvordan tabeller henger sammen med primær- og fremmednøkler. Jeg har også lært om indekser, views og validering av data.
+
 
 **Hvordan har denne oppgaven bidratt til å oppnå læringsmålene:**
 
-[Skriv din refleksjon her - koble oppgaven til læringsmålene i emnet]
+Denne oppgaven har hjulpet meg å bruke teorien i praksis. Jeg fikk erfaring med å skrive SQL, strukturere databaser og forstå hvordan forskjellige løsninger påvirker ytelse og datakvalitet.
 
 Se oversikt over læringsmålene i en PDF-fil i Canvas https://oslomet.instructure.com/courses/33293/files/folder/Plan%20v%C3%A5ren%202026?preview=4370886
 
 **Hva var mest utfordrende:**
 
-[Skriv din refleksjon her - diskuter hvilke deler av oppgaven som var mest krevende]
+Det mest utfordrende var å forstå normalisering, forskjellen mellom views og policies, samt hvordan indekser fungerer i praksis.
 
 **Hva har du lært om databasedesign:**
 
-[Skriv din refleksjon her - reflekter over prosessen med å designe en database fra bunnen av]
+Jeg har lært at databasedesign handler om å organisere data på en strukturert måte slik at man unngår duplisering, sikrer dataintegritet og gjør systemet effektivt og lett å vedlikeholde.
+
 
 ---
 
