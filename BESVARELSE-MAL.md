@@ -312,16 +312,42 @@ Se oversikt over læringsmålene i en PDF-fil i Canvas https://oslomet.instructu
 **SQL for trigger:**
 
 ```sql
-[Skriv din SQL-kode for trigger her, hvis du har løst denne oppgaven]
+CREATE OR REPLACE FUNCTION update_lagerbeholdning()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- عندما يبدأ تأجير دراجة ننقص العدد
+    IF TG_OP = 'INSERT' THEN
+        UPDATE stasjon
+        SET tilgjengelige_sykler = tilgjengelige_sykler - 1
+        WHERE id = NEW.stasjon_id;
+    END IF;
+
+    -- عند إرجاع الدراجة نزيد العدد
+    IF TG_OP = 'UPDATE' AND NEW.sluttdato IS NOT NULL THEN
+        UPDATE stasjon
+        SET tilgjengelige_sykler = tilgjengelige_sykler + 1
+        WHERE id = NEW.stasjon_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_lagerbeholdning
+AFTER INSERT OR UPDATE ON utleie
+FOR EACH ROW
+EXECUTE FUNCTION update_lagerbeholdning();
+
 ```
 
 **Forklaring:**
 
-[Skriv ditt svar her - forklar hvordan triggeren fungerer]
+Triggeren oppdaterer lagerbeholdningen automatisk. Når en ny utleie registreres (INSERT), reduseres antall tilgjengelige sykler på stasjonen med 1. Når sykkelen leveres tilbake (UPDATE med sluttdato), økes antallet igjen. Dette sikrer at lagerstatus alltid er korrekt uten manuell oppdatering.
+
 
 **Testing:**
 
-[Skriv ditt svar her - vis hvordan du har testet at triggeren fungerer som forventet]
+Jeg testet triggeren ved å sette inn en ny rad i utleie-tabellen og sjekket at tilgjengelige_sykler i stasjon-tabellen ble redusert. Deretter oppdaterte jeg sluttdato for samme utleie og bekreftet at antallet sykler økte igjen. Triggeren fungerte som forventet.
 
 ---
 
